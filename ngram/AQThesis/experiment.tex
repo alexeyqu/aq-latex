@@ -8,47 +8,113 @@
 
 \subsection{ Корпус }
 
-Для обучения и сравнения $n$-граммных моделей использовался корпус html-страниц с ряда японских сайтов (\todo{Каких? Где?}) общим размером $\approx 8,5 GB$. 
+Для обучения и сравнения $n$-граммных моделей использовался корпус html-страниц с ряда японских сайтов \todo{Каких?} общим размером $\approx 8,5 GB$. 
+
+В корпусе было 163244 html-страницы со средним размером $\approx 52 kB$.
 
 Тексты из этого корпуса не были результатом OCR, поэтому в них не должно было быть ошибок, связанных с распознаванием. Эти тексты были признаны верными с точки зрения языка и подходящими для обучения моделей.
 
-В рамках подготовки корпуса к эксперименту тексты были перемешаны, чтобы тематика текста не зависела от его исходного положения в корпусе, из текстов были удалены html-теги, сложное форматирование, небольшое число мусорных символов. Также корпус был единообразно переведён в кодировку Unicode. Подробнее об этих технических этапах -- см. раздел \ref{sec:coding}.
+В рамках подготовки корпуса к эксперименту тексты были перемешаны, чтобы тематика текста не зависела от его исходного положения в корпусе, из текстов были удалены html-теги, сложное форматирование, небольшое число мусорных символов. Также корпус был единообразно переведён в кодировку Unicode. Подробнее об этих технических этапах -- см. раздел \cref{sec:coding}.
 
-После вышеперечисленных операций корпус был готов к использованию, его размер составлял $\approx 1,5 GB$. При этом размер алфавита в нашем корпусе составлял $\approx 7000$ символов, что в 3 раза меньше размера таблиц Unicode.
+После вышеперечисленных операций корпус был готов к использованию, его размер составлял $\approx 1,7 GB$. При этом размер алфавита в нашем корпусе составлял $\approx 7000$ символов, что в 3 раза меньше размера таблиц Unicode.
 
 Имея данные, готовые к использованию, было бы глупо не построить по ним несколько графиков.
 
-\subsection{ \todo{Zipf} }
+\subsection{ Обработка корпуса }
 
-Если посмотреть на распределение частот отдельных символов, то оно выглядело так:
+После обработки корпуса его можно было описать следующими цифрами:
 
-\begin{figure}[H]
-	\centering
-	\includegraphics{draft.png}
-	\caption{1gramstats}
-	\label{fig:1gramstats_all}
-\end{figure}
+\begin{tabular}{l|c}
+	Параметр & Значение \\ \hline 
+	Размер (kB) & 1 721 504 \\
+	Символов & 640 604 961 \\
+	среди них уникальных & 6 861 \\
+	Предложений & 79 497 345	\\  \hline
+\end{tabular}
 
-Видно, что распределение похоже на обратно экспоненциальное (кстати, это же утверждает закон Ципфа \todo{link}). Проверим эту гипотезу, построив график обратного логарифма (\todo{формулы}):
+\vspace{20pt}
 
-\begin{figure}[H]
-	\centering
-	\includegraphics{draft.png}
-	\caption{zipf}
-	\label{fig:zipf1gram}
-\end{figure}
-
-Действительно, этот график с достаточной точностью ложится на прямую (\todo{погрешности?}). Тем самым, в NLP закон Ципфа проверен ещё раз.
-
-Посмотрев на Рис. \ref{fig:1gramstats_all}, можно также заметить, что только очень малая часть символов появляется большое число раз. Посмотрим поближе на "голову"\ того же распределения:
+Если посмотреть на распределение частот отдельных символов (\cref{plt:gramstats1_all}), то оно выглядело так:
 
 \begin{figure}[H]
-	\centering
-	\includegraphics{draft.png}
-	\caption{1gramstats head}
-	\label{fig:gramstats_head}
+\begin{tikzpicture}
+	\begin{axis}
+		[
+		width=12cm, %height=5cm,
+		%ybar,
+		%bar width=20pt,
+		ylabel={Количество, шт},
+		xlabel={Порядковый номер символа},
+		axis x line=bottom,
+		axis y line=left,
+		enlarge x limits=0.1,
+		enlarge y limits=0.1,
+		]	
+		\addplot gnuplot[raw gnuplot, mark=none, color=blue]{ plot 'plots/1gramstats.csv' using ($1):($2) every 5 with lines; };
+	\end{axis}
+\end{tikzpicture}
+\caption{Распределение частот униграмм}
+\label{plt:gramstats1_all}
 \end{figure}
 
+%\begin{figure}[H]
+%	\centering
+%	\includegraphics{draft.png}
+%	\caption{1gramstats}
+%	\label{fig:1gramstats_all}
+%\end{figure}
+
+Видно, что распределение похоже на обратно экспоненциальное (кстати, это же утверждает закон Ципфа, см. \cite{manning}). Проверим эту гипотезу, построив график обратного логарифма (\cref{plt:gramstats1log}):
+
+\pgfplotstableread[col sep = space]{plots/1gramstatslog_small.csv}\loadedtable
+
+\begin{figure}[H]
+	\begin{tikzpicture}
+	\begin{axis}
+	[
+	width=12cm, %height=5cm,
+	%ybar,
+	%bar width=20pt,
+	ylabel={$\log\left( \dfrac{1}{\text{Количество}} \right)$},
+	xlabel={Порядковый номер символа},
+	axis x line=bottom,
+	axis y line=left,
+	enlarge x limits=0.1,
+	enlarge y limits=0.1,
+	minor tick num = 2
+	]	
+	\addplot gnuplot[raw gnuplot, mark=none, color=blue]{ plot 'plots/1gramstatslog.csv' using ($1):($2) every 5 with lines; };
+	\addplot[very thick, red] table [col sep = space, y={create col/linear regression={y=count}}]{\loadedtable};
+	\end{axis}
+	\end{tikzpicture}
+	\caption{Проверка закона Ципфа}
+	\label{plt:gramstats1log}
+\end{figure}
+
+Действительно, этот график с достаточной точностью ложится на прямую, выбиваясь из неё только в начале списка символов (там находятся самые частотные кандзи, а также практически вся хирагана/катакана, подробнее про распределения различных подмножеств символов см. \cref{sec:noisezipfstats}). Тем самым, в NLP закон Ципфа проверен ещё раз.
+
+Посмотрев на \cref{plt:gramstats1_head}, можно также заметить, что только очень малая часть символов появляется большое число раз. Посмотрим поближе на "голову"\ того же распределения:
+
+\begin{figure}[H]
+	\begin{tikzpicture}
+	\begin{axis}
+	[
+	width=12cm, %height=5cm,
+	%ybar,
+	%bar width=20pt,
+	ylabel={Количество, шт},
+	xlabel={Порядковый номер символа},
+	axis x line=bottom,
+	axis y line=left,
+	enlarge x limits=0.1,
+	enlarge y limits=0.1,
+	]	
+	\addplot gnuplot[raw gnuplot, mark=none, color=blue]{ plot 'plots/1gramstats.csv' using ($1):($2) every 5::::200 with lines; };
+	\end{axis}
+	\end{tikzpicture}
+	\caption{Частоты униграмм -- голова распределения }
+	\label{plt:gramstats1_head}
+\end{figure}
 Действительно, лишь $\approx 200$ символов встречаются достаточно часто.
 
 Осталюся ещё примерно $6500$ символов, которые входят в алфавит, но статистически мало отличаются от тех символов, что вовсе не встретились в нашем корпусе. Для оптимизации времени работы и занимаемой памяти эти символы можно представить более сжато.
@@ -57,14 +123,30 @@
 	{\textit{Корзина (бакет, bucket)}} -- множество символов, которые считаются статистически малозначимыми и заменяются на U+FFFD (Unicode Replacement Character).
 \end{definition}
 
-Бакет $B_i$ характеризуется числом $|\Sigma_{B_i}|$ -- размером алфавита, который остаётся после сливания некоторого хвоста распределения в бакет. Было решено рассматривать бакеты с алфавитами размером $|\Sigma_{B_i}| = \{ 7000, 4800, 2600, 200 \}$, поскольку примерно на эти размеры алфавитов приходятся изменения в характере убывания частот символов.
+Бакет $B_i$ характеризуется числом $|\Sigma_{B_i}|$ -- размером алфавита, который остаётся после сливания некоторого хвоста распределения в бакет. Было решено рассматривать бакеты с алфавитами размером $|\Sigma_{B_i}| = \{ 7000, 4800, 2600, 200 \}$, поскольку примерно на эти размеры алфавитов приходятся изменения в характере убывания частот символов. При этом бакет $|\Sigma_{B_i}| = 7000$ представляет собой исходный корпус. 
 
-На Рис. \ref{fig:bucket_pic} схематично изображено распределение частот после применения бакета с $|\Sigma_{B_i}| = 200$.
+\textbf{Основным} бакетом впоследствии был выбран $B^* : |\Sigma_{B^*}| = 4800$, поскольку при нём, с одной стороны, реализуется \textbf{сглаживание} хвоста распределения, что косвенно даёт возможность учитывать символы, не встретившиеся в обучающей выборке. С другой стороны, размер алфавита остаётся достаточно большим, что будет важно при рассмотрении шумов (см. \cref{sec:noisezipfstats})
+
+На \cref{fig:bucket_pic} схематично изображено распределение частот после применения бакета с $|\Sigma_{B_i}| = 2600$.
 
 \begin{figure}[H]
-	\centering
-	\includegraphics{draft.png}
-	\caption{bucket}
+	\begin{tikzpicture}
+	\begin{axis}
+	[
+	width=12cm, %height=5cm,
+	%ybar,
+	%bar width=20pt,
+	ylabel={Количество, шт},
+	xlabel={Порядковый номер символа},
+	axis x line=bottom,
+	axis y line=left,
+	enlarge x limits=0.1,
+	enlarge y limits=0.1,
+	]	
+	\addplot gnuplot[raw gnuplot, only marks, color=blue]{ plot 'plots/1gramstats-bucket.csv' using ($1):($2) every 5 with lines; };	\addplot gnuplot[raw gnuplot, only marks, color=red]{ plot 'plots/1gramstats-bucketed.csv' using ($1):($2) every 5 with lines; };
+	\end{axis}
+	\end{tikzpicture}
+	\caption{Распределение частот униграмм: бакет с $|\Sigma_{B_i}| = 2600$}
 	\label{fig:bucket_pic}
 \end{figure}
 
@@ -84,9 +166,9 @@
 
 С помощью шума $Noise$ случайным образом генерируются ошибки в предложениях текста $Text$. Таким образом происходит стохастическая эмуляция ошибок OCR. 
 
-Тестовая часть корпуса была разбита на предложения (см. формальную постановку задачи в разделе \ref{sec:taskdef}), которые независимо друг от друга зашумлялись. Эти предложения после зашумления подавались на вход оценивающему алгоритму $\Theta$, который выбирал лучший из предложенных вариантов.
+Тестовая часть корпуса была разбита на предложения (см. формальную постановку задачи в разделе \cref{sec:taskdef}), которые независимо друг от друга зашумлялись. Эти предложения после зашумления подавались на вход оценивающему алгоритму $\Theta$, который выбирал лучший из предложенных вариантов.
 
-Были определены следующие шумы, обоснование выбора см. в разделе \ref{sec:taskdef}: 
+Были определены следующие шумы, обоснование выбора см. в разделе \cref{sec:taskdef}: 
 
 \begin{itemize}
 	\item[KaGa] Наборы симвопов, соответствующие добавлению диакритики. Например,
@@ -109,8 +191,8 @@
 			だな \\
 			んだ \\
 			ちぢ \\
-			つづ \\
-		ほぼぽ \end{CJK}
+		ほぼぽ \\
+	. . .\end{CJK}
 	\end{multicols}
 	
 	\item[HalfWidth] Полуширинные/полноширинная катакана:
@@ -134,7 +216,7 @@
 			ｴエ\\
 			ｵオ\\
 			ｶカ\\
-			ｷキ  \end{CJK}
+			. . .  \end{CJK}
 	\end{multicols}
 	
 
@@ -157,7 +239,7 @@
 		イィ\\
 		ウゥ\\
 		エェ\\
-		オォ \end{CJK}
+		. . . \end{CJK}
 \end{multicols}
 
 	\item[Mix] Комбинация предыдущих режимов.
@@ -178,12 +260,11 @@
 			イィ\\
 			ウゥ\\
 			エェ\\
-			オォ \end{CJK}
+			オォ \\
+		. . . \end{CJK}
 	\end{multicols}
 	
 \end{itemize}
-
-\todo{ Срез шума в Ципфе -- график }
 
 Интересно понимать, как выглядит результат работы генератора шума.
 Предположим, на вход генератору было дано следующее предложение:
@@ -193,7 +274,7 @@
 Тогда для различных шумов и режима "1 символ на предложение" получались такие результаты, которые затем фиксировались.
 
 \begin{tabular}{c|c}
-	Шум 	& Текст (пер. с яп. Campaign has ended)\\
+	Шум 	& Текст\\
 	Эталон 	& \begin{CJK}{UTF8}{min}キャンペーンは終了致しました。 \end{CJK} \\
 	KaGa	&  \begin{CJK}{UTF8}{min}ギャンペーン\colorbox{yellow}{\textbf{ぱ}}終了致しました。 \end{CJK} \\
 	HalfWidth &  \begin{CJK}{UTF8}{min}キャンペ\colorbox{yellow}{\textbf{ｰ}}ンは終了致しました。 \end{CJK} \\
@@ -201,18 +282,107 @@
 	Mix 	&  \begin{CJK}{UTF8}{min}\colorbox{yellow}{\textbf{ギ}}ャンペーンは終了致しました。 \end{CJK} 
 \end{tabular}
 
+\subsection{ Статистика по шумовым символам }
+\label{sec:noisezipfstats}
+
+Посмотрим на то, где в общем распределении символов лежат шумовые символы. На всех графиках этого раздела пунктиром показана граница основного бакета $B^*$ c $|\Sigma_{B^*}| = 4800$.
+
+\paragraph{ KaGa шум } Рассмотрим, как выглядят KaGa шумовые символы на фоне всех остальных в корпусе (шкала логарифмическая, \cref{plt:kaga-noise}).
+
+\begin{figure}[H]
+	\begin{tikzpicture}
+	\begin{axis}
+	[
+	width=12cm, %height=5cm,
+	%ybar,
+	%bar width=20pt,
+	ylabel={Количество, шт},
+	xlabel={Порядковый номер символа},
+	axis x line=bottom,
+	axis y line=left,
+	enlarge x limits=0.1,
+	enlarge y limits=0.1,
+	xmode=log,
+	]	
+	\addplot gnuplot[raw gnuplot, mark=none, color=blue, very thick]{ plot 'plots/noise/kaga-no.csv' using ($1):($2) every 5 with filledcurves below x1 ; };
+	\addplot gnuplot[raw gnuplot, color=red, only marks]{ plot 'plots/noise/kaga-yes.csv' using ($1):($2) with impulses ; };
+	\draw [dashed] (4800, -1000000) -- (4800, 16000000);
+	\end{axis}
+	\end{tikzpicture}
+	\caption{Распределение частот шума KaGa}
+	\label{plt:kaga-noise}
+\end{figure}
+
+Видно, что шумовые символы лежат достаточно равномерно по кривой распределения, что может в будущем помешать оцениванию моделей для небольших размеров алфавита.
+
+\paragraph{ BigSmall шум } Приведём аналогичный график для шума, состоящего из больших и маленьких кан (шкала логарифмическая, \cref{plt:bigsmall-noise}).
+
+\begin{figure}[H]
+	\begin{tikzpicture}
+	\begin{axis}
+	[
+	width=12cm, %height=5cm,
+	%ybar,
+	%bar width=20pt,
+	ylabel={Количество, шт},
+	xlabel={Порядковый номер символа},
+	axis x line=bottom,
+	axis y line=left,
+	enlarge x limits=0.1,
+	enlarge y limits=0.1,
+	xmode=log,
+	]	
+	\addplot gnuplot[raw gnuplot, mark=none, color=blue, very thick]{ plot 'plots/noise/bigsmall-no.csv' using ($1):($2) every 5 with filledcurves below x1 ; };
+	\addplot gnuplot[raw gnuplot, color=red, only marks]{ plot 'plots/noise/bigsmall-yes.csv' using ($1):($2) with impulses ; };
+	\draw [dashed] (4800, -1000000) -- (4800, 16000000);
+	\end{axis}
+	\end{tikzpicture}
+	\caption{Распределение частот шума BigSmall}
+	\label{plt:bigsmall-noise}
+\end{figure}
+
+В этом случае видно, что шумовые маленькие буквы в основном сконцентрированы в хвосте распределения. Поэтому для малых размеров алфавита работа с этим шумом бесполезна.
+
+\paragraph{ Mix шум } Если смешать эти 2 шума (KaGa и BigSmall) и построить такой же график для смеси, то результат предсказуемо будет являть собой наложение двух предыдущих графиков (шкала логарифмическая, \cref{plt:mix-noise})
+
+\begin{figure}[H]
+	\begin{tikzpicture}
+	\begin{axis}
+	[
+	width=12cm, %height=5cm,
+	%ybar,
+	%bar width=20pt,
+	ylabel={Количество, шт},
+	xlabel={Порядковый номер символа},
+	axis x line=bottom,
+	axis y line=left,
+	enlarge x limits=0.1,
+	enlarge y limits=0.1,
+	xmode=log,
+	]	
+	\addplot gnuplot[raw gnuplot, mark=none, color=blue, very thick]{ plot 'plots/noise/bigsmall-no.csv' using ($1):($2) every 5 with filledcurves below x1 ; };
+	\addplot gnuplot[raw gnuplot, color=red, only marks]{ plot 'plots/noise/kaga-yes.csv' using ($1):($2) with impulses ; };
+	
+	\addplot gnuplot[raw gnuplot, color=green, only marks]{ plot 'plots/noise/bigsmall-yes.csv' using ($1):($2) with impulses ; };
+	\draw [dashed] (4800, -1000000) -- (4800, 16000000);
+	\end{axis}
+	\end{tikzpicture}
+	\caption{Распределение частот шума Mix}
+	\label{plt:mix-noise}
+\end{figure}
+
 \subsection{ Baseline эксперимента }
 
-В качестве бейзлайна эксперимента была выбрана униграммная модель ($n = 1$).
+В качестве бейзлайна эксперимента была выбрана униграммная модель ($n = 1$) (результаты показаны для основного бакета, $|\Sigma_{B^*}| = 4800$).
 
-Для разных шумов она показала следующие результаты, $|\Sigma_{B_i}| = 4800$:
+Для разных шумов она показала следующие результаты:
 
 \begin{tabular}{c|c}
 	Шум 	& Оценка модели \\ \hline
 	KaGa	& 0.70  \\
 	HalfWidth &  0.71 \\
 	BigSmall & 0.77  \\
-	Mix 	&  
+	Mix 	&  0.73
 \end{tabular}
 
-\todo{достать и добавить результаты для остальных бакетов}
+\todo{достать и добавить результаты для остальных бакетов?}

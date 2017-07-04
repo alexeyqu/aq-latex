@@ -37,7 +37,7 @@
 Рассмотрим эти символы подробнее:
 
 \begin{itemize}
-	\item Хирагана (см. Рис. \ref{fig:hirag_sample}). В основном используется для образования грамматических морфем.
+	\item Хирагана (см. Рис. \cref{fig:hirag_sample}). В основном используется для образования грамматических морфем.
 	\begin{figure}[H]
 		\centering
 		\includegraphics{hirag_sample.png}
@@ -45,7 +45,7 @@
 		\label{fig:hirag_sample}
 	\end{figure}
 	
-	\item Катакана (см. Рис. \ref{fig:katak_sample}). Используется для транскрибирования иностранных заимствованных слов.
+	\item Катакана (см. Рис. \cref{fig:katak_sample}). Используется для транскрибирования иностранных заимствованных слов.
 	\begin{figure}[H]
 		\centering
 		\includegraphics{katak_sample.png}
@@ -53,7 +53,7 @@
 		\label{fig:katak_sample}
 	\end{figure}
 
-	\item Также есть диакритические символы -- дакутен, хандакутен (см. Рис. \ref{fig:dakut_sample_hir} и \ref{fig:dakut_sample_kat}). Они могут применяться как к катакане, так и к хирагане, и определённым образом влияют на звучание слогов.
+	\item Также есть диакритические символы -- дакутен, хандакутен (см. Рис. \cref{fig:dakut_sample_hir} и \cref{fig:dakut_sample_kat}). Они могут применяться как к катакане, так и к хирагане, и определённым образом влияют на звучание слогов.
 	\begin{multicols}{2}
 		
 		\begin{figure}[H]
@@ -72,7 +72,7 @@
 		
 	\end{multicols}
 	
-	\item Кандзи (см. Рис. \ref{fig:kandji_sample}). Это символы, несущие семантическую нагрузку.
+	\item Кандзи (см. Рис. \cref{fig:kandji_sample}). Это символы, несущие семантическую нагрузку.
 	\begin{figure}[H]
 		\centering
 		\includegraphics{kanji_sample.png}
@@ -83,7 +83,7 @@
 
 Кана различает 46 слогов, которые могут записываться как катаканой, так и хираганой. А вот иероглифов кандзи существует гораздо больше (2136 (т.н. jōyō kanji -- "обычно используемые кандзи") достаточно для жизни, 6879 используется в кодировке JIS X 0208 (Japanese Industrial Standart, см. \cite{JISX0208}), а стандарт Unicode определяет то ли 21000, то ли 75000, надо разобраться) \todo{цифры, мб зависит от стандарта Unicode?}.
 
-Японский текст записывается с помощью комбинаций кандзи, кан и пунктуации, при этом отсутствует пробельное деление предложений на слова (см. Рис. \ref{fig:japtext_sample}).
+Японский текст записывается с помощью комбинаций кандзи, кан и пунктуации, при этом отсутствует пробельное деление предложений на слова (см. Рис. \cref{fig:japtext_sample}).
 	\begin{figure}[H]
 	\centering
 	\includegraphics{japtext_sample.png}
@@ -100,17 +100,17 @@
 \begin{itemize}
 	\item[2Kana] 2 похожие каны. Таких случаев достаточно мало, а методы их различения уже существуют (см., например, метод с использованием глубокого обучения и свёрточных нейронных сетей в работе \cite{tsai:dcnn})
 	\begin{figure}[H]
-		\center{\includegraphics[height=100pt]{KanaO.png}\ \todo{и} \includegraphics[height=100pt]{KanaWi.png}}
+		\center{\raisebox{-.5\height}{\includegraphics[height=100pt]{KanaO.png}}\ и \raisebox{-.5\height}{\includegraphics[height=100pt]{KanaWi.png}}}
 	\end{figure}
 
 	\item[KaGa] Кана может легко путаться с соответствующим её дакутен-символом.
 	\begin{figure}[H]
-		\center{\includegraphics[height=100pt]{KanaKa.png}\ и \includegraphics[height=100pt]{KanaGa.png}}
+		\center{\raisebox{-.5\height}{\includegraphics[height=100pt]{KanaKa.png}}\ и \raisebox{-.5\height}{\includegraphics[height=100pt]{KanaGa.png}}}
 	\end{figure}
 
 	\item[BigSmall] Существуют большие и маленькие каны, которые нужно различать.
 	\begin{figure}[H]
-		\center{\includegraphics[height=100pt]{KanaYo.png}\ и \includegraphics[height=100pt]{KanaYoSmall.png}}
+		\center{\raisebox{-.5\height}{\includegraphics[height=100pt]{KanaYo.png}}\ и \raisebox{-.5\height}{\includegraphics[height=100pt]{KanaYoSmall.png}}}
 	\end{figure}
 	
 \end{itemize}
@@ -143,4 +143,4 @@
 	{\textit{Качество алгоритма $Q(\Theta) = \dfrac{\#\{ \text{угаданных предложений} \}}{\#\{ \text{всего предложений} \}}$}}.
 \end{definition}
 
-Задача -- реализовать ряд оценивающих алгоритмов (см. раздел \ref{sec:models}), основанных на $n$-граммных моделях, и сравнить их по качеству.
+Задача -- реализовать ряд оценивающих алгоритмов (см. раздел \cref{sec:models}), основанных на $n$-граммных моделях, и сравнить их по качеству.

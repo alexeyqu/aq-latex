@@ -25,6 +25,15 @@
 \counterwithout{table}{chapter}
 \usepackage{multicol}
 
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\pgfplotsset{compat = 1.7}
+\usepackage{filecontents}
+
+%\usepgfplotslibrary{external} 
+%\tikzexternalize
+\pgfplotsset{compat=newest}
+
 \usepackage{CJKutf8}
 %\onehalfspacing
 \linespread{1.5}
@@ -46,6 +55,10 @@
 % continuous equation numbering through chapters
 \usepackage{chngcntr}
 \counterwithout{equation}{chapter}
+
+\usepackage{cleveref}
+
+\usepackage{caption}
 
 \usepackage{amsthm}
 \theoremstyle{definition}
@@ -87,7 +100,7 @@
 
 В работе \cite{nagata:context} также даются эвристики для определения границ слов, использующие граф линейного деления (ГЛД). Эти границы слов затем используются в $n$-граммной модели в качестве вспомогательного контекста.
 
-Более подробно эти и другие подходы разобраны в соответствующем разделе (\ref{sec:litreview}).
+Более подробно эти и другие подходы разобраны в соответствующем разделе (\cref{sec:litreview}).
 
 Данное исследование призвано рассмотреть некоторые из $n$-граммных моделей и сравнить их эффективность в задаче исправления опечаток в японском языке.
 
