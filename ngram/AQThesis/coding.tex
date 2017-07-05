@@ -17,26 +17,33 @@
 
 \paragraph{ BeautifulSoup.UnicodeDammit } Спасительный модуль для работы с разнообразными кодировками в составе пакета BeautifulSoup. Особенно мощно работает в связке с библиотеками chardet и cchardet. Без него привести корпус к читабельному виду было бы невозможно.
 
-В качестве подтверждения -- статистика по различным кодировкам в исходном корпусе:
+В качестве подтверждения -- статистика по различным кодировкам в исходном корпусе (\cref{table:encodings}):
 
-\begin{tabular}{|c|c|} \hline
-Кодировка & Количество файлов \\ \hline 
-utf-8 & 68789\\ 
-iso-8859-2 & 46870\\ 
-shift\_jis & 42015\\ 
-euc-jp & 2562\\ 
-cp932 & 1575\\ 
-ascii & 544\\ 
-windows-1253 & 436\\ 
-iso-8859-7 & 256\\ 
-windows-1252 & 78\\ 
-iso-8859-5 & 9\\ 
-gb2312 & 4\\ 
-tis-620 & 4\\ 
-ibm866 & 1\\ 
-maccyrillic & 1\\ \hline
-Всего & 163144 \\ \hline
-\end{tabular}
+\begin{table}[H]
+	\begin{center}
+		\begin{tabular}{|c|c|} \hline
+			Кодировка & Количество файлов \\ \hline 
+			utf-8 & 68789\\ 
+			iso-8859-2 & 46870\\ 
+			shift\_jis & 42015\\ 
+			euc-jp & 2562\\ 
+			cp932 & 1575\\ 
+			ascii & 544\\ 
+			windows-1253 & 436\\ 
+			iso-8859-7 & 256\\ 
+			windows-1252 & 78\\ 
+			iso-8859-5 & 9\\ 
+			gb2312 & 4\\ 
+			tis-620 & 4\\ 
+			ibm866 & 1\\ 
+			maccyrillic & 1\\ \hline
+			Всего & 163144 \\ \hline
+		\end{tabular}
+	\caption{Кодировки в корпусе}
+	\label{table:encodings}
+	\end{center}
+\end{table}
+
 
 Документацию можно найти в \cite{python:dammit}.
 

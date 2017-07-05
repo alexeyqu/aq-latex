@@ -1,29 +1,41 @@
 
 \section{ Анализ результатов }\label{sec:analysis}
 
-В итоге оптимальной была признана модель Катца с глубиной бора $n=5$, результаты которой ещё улучшились после добавления опции отказа от классификации при недостаточной уверенности.
+В итоге оптимальной была признана модель Катца с глубиной бора $n=5$, результаты которой ещё улучшились после добавления опции отказа от классификации при недостаточной уверенности (\cref{table:katzres}).
+
+\begin{table}[H]
+	\begin{center}
 
 \begin{tabular}{|c|c|c|c|}\hline
 	$M \backslash N$ & \KG & \BS & \MX \\ \hline
 	Katz($n=5, C=1.0$)			 & 0.961 & 0.965 & 0.962 \\
 	Katz($n=5, C=0.97$)	 & 0.966  & 0.986 & 0.967 \\ \hline 	
 \end{tabular}
+\caption{Результаты модели Катца}
+\label{table:katzres}
+\end{center}
+\end{table}
 
 Проанализируем эти цифры глубже.
 
 \subsection{ Сравнение с другими методами }
 
-Сравним наши результаты с результатами решения аналогичной задачи через нейросети (\todo{конкретика, Даниил?}): 
+Сравним наши результаты с полученными в работе \cite{nagata:shape}. В этой работе ошибки OCR исправлялись с помощью примерно такого же инструментария ($n$-граммы, Backoff, сглаживание). Несмотря на то, что эта работа является самой близкой по характеру, есть существенное отличие: в не йиспользовалась информаци о словном делении. См. \cref{table:nagres}.
 
-\begin{tabular}{|c|c|c|c|}\hline
-	$M \backslash $ & Certain accuracy & Classification rate & Uncertain accuracy \\ \hline
-	NN	 & 0.976  & 0.77  & 0.73 \\
-	Katz	 & 0.967  & 0.77 & 0.72  \\ \hline 	
+\begin{table}[H]
+	\begin{center}
+
+\begin{tabular}{|c|c|}\hline
+	Модель & Accuracy \\ \hline
+	Katz			 &  0.96--0.986 \\
+	Nagata & 0.97--0.98 \\ \hline 	
 \end{tabular}
+\caption{Сравнение с результатами \cite{nagata:shape}}
+\label{table:nagres}
+\end{center}
+\end{table}
 
-Видно, что модель, основанная на $n$-граммах, ведёт себя неплохо по сравнению с рекуррентной нейросетью.
-
-\todo{а надо ли тут писать больше?}
+Учитывая, что наш метод не использует информацию о словном делении, можно считать показатели модели Катца хорошими, осознавая при этом  неравенство корпусов, моделей шума и прочей вспомогательной информации.
 
 \subsection{ Анализ ошибок }
 
@@ -31,14 +43,39 @@
 
 \paragraph{ Нехватка информации } В условиях ручной генерации тестовых выборок (т.е. отсутствия отрицательных примеров для обучения) и $n$-граммной модели при рассмотрении эталонного и зашумлённого вариантов предложения зашумлённый всегда предполагается неверным. При этом, безусловно, существуют случаи, когда зашумлённый вариант встречается чаще, чем эталонный (значит, он наверняка возможен), из-за этого побеждает эталонный вариант при оценивании и решение классификатора считается неверным.
 	
-Приведём пример: 
+Приведём пример (3-граммная модель Катца), см. \cref{table:err} (здесь и далее оценка приведена во внутренних единицах): 
+
+\begin{table}[H]
+	\begin{center}
 
 \begin{tabular}{|c|c|c|} \hline
 	Тип & Предложение & Оценка \\ \hline
-	Эталон & \begin{CJK}{UTF8}{min} ご要望\colorbox{yellow}{\textbf{に}}あわせて、勉強会を開催。 \end{CJK} & 56 \\
-	Шум & \begin{CJK}{UTF8}{min} ご要望\colorbox{yellow}{\textbf{な}}あわせて、勉強会を開催。 \end{CJK} & 63 \\ \hline
+	Эталон & \begin{CJK}{UTF8}{min} ご要望\colorbox{yellow}{\textbf{な}}あわせて、勉強会を開催。 \end{CJK} & 56 \\
+	Шум & \begin{CJK}{UTF8}{min} ご要望\colorbox{yellow}{\textbf{に}}あわせて、勉強会を開催。 \end{CJK} & 63 \\ \hline
 \end{tabular}
+\caption{Пример ошибочной классификации}
+\label{table:err}
+\end{center}
+\end{table}
 
-%\paragraph{ Несовершенность модели }
+Рассмотрим процесс получения такой оценки.
 
-\todo{что ещё?}
+Поскольку предложения отличаются 1 символом, а модель 3-граммная, то на итоговую оценку влияют следующие $n$-граммы:
+
+Эталон:
+\begin{itemize}
+	\item \begin{CJK}{UTF8}{min} 要望\colorbox{yellow}{\textbf{な}} \end{CJK}  $ \rightarrow 15$
+	\item \begin{CJK}{UTF8}{min} 望\colorbox{yellow}{\textbf{な}}あ  \end{CJK} $ \rightarrow 7$
+	\item \begin{CJK}{UTF8}{min} \colorbox{yellow}{\textbf{な}}あわ  \end{CJK} $ \rightarrow 22$
+\end{itemize}
+
+Зашумлённое предложение:
+\begin{itemize}
+\item \begin{CJK}{UTF8}{min} 要望\colorbox{yellow}{\textbf{に}}  \end{CJK} $ \rightarrow 0 \Rightarrow \text{Backoff to bigrams}$
+\item \begin{CJK}{UTF8}{min} 要望  \end{CJK} $ \rightarrow 45$
+\item \begin{CJK}{UTF8}{min} 望\colorbox{yellow}{\textbf{に}}  \end{CJK} $ \rightarrow 23$
+\item \begin{CJK}{UTF8}{min} 望\colorbox{yellow}{\textbf{に}}あ \end{CJK} $ \rightarrow 6$
+\item \begin{CJK}{UTF8}{min} \colorbox{yellow}{\textbf{に}}あわ  \end{CJK} $ \rightarrow 21$
+\end{itemize}
+
+После применения штрафов за Backoff второе предложение всё равно выигрывает, решение считается неверным, но зашумлённое предложение встречается на самом деле.
