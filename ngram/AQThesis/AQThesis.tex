@@ -24,6 +24,7 @@
 \counterwithout{figure}{chapter}
 \counterwithout{table}{chapter}
 \usepackage{multicol}
+\usepackage{tabularx,ragged2e,booktabs,caption}
 
 \usepackage{pgfplots}
 \usepackage{pgfplotstable}
@@ -40,6 +41,10 @@
 
 % remove chapter number from section headings
 \renewcommand*\thesection{\arabic{section}}
+
+\newcommand{\KG}{\textbf{KaGa}}
+\newcommand{\BS}{\textbf{BigSmall}}
+\newcommand{\MX}{\textbf{Mix}}
 
 \usepackage{amsmath}
 \DeclareMathOperator*{\argmin}{argmin}
@@ -69,6 +74,16 @@
 
 \newcommand{\todo}[1]{}
 \renewcommand{\todo}[1]{{\color{red} TODO: {#1}}}
+
+\newcounter{appx}
+\renewcommand{\theappx}{\Asbuk{appx}}
+
+\newcommand{\intro}[1]{
+	\stepcounter{section}
+	\section*{Приложение \Asbuk{section}. #1}
+	\addcontentsline{toc}{section}{Приложение \Asbuk{section}. #1}
+	\refstepcounter{appx}
+}
 
 \begin{document}
 	
@@ -134,9 +149,12 @@
 
 Также были проведены измерения производительности этих подходов с точек зрения времени и памяти. В силу особенностей японского языка затраты памяти на работу с обученной моделью впечатляют.
 
-Возможными направлениями дальнейшего развития данной темы могли бы стать исследования с реальными OCR-ошибками, или привлечение знаний о грамматической структуре языка для выделения важных частных случаев.
+Возможными направлениями дальнейшего развития данной темы могли бы стать исследованияп с реальными OCR-ошибками, или привлечение знаний о грамматической структуре языка для выделения важных частных случаев.
 
 \newpage
 \include{bib}
+
+\newpage
+\include{appendix}
 
 \end{document}
