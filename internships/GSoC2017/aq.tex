@@ -1,0 +1,267 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% LaTeX Template: Curriculum Vitae
+%
+% Source: http://www.howtotex.com/
+% Feel free to distribute this template, but please keep the
+% referal to HowToTeX.com.
+% Date: July 2011
+% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% How to use writeLaTeX: 
+%
+% You edit the source code here on the left, and the preview on the
+% right shows you the result within a few seconds.
+%
+% Bookmark this page and share the URL with your co-authors. They can
+% edit at the same time!
+%
+% You can upload figures, bibliographies, custom classes and
+% styles using the files menu.
+%
+% If you're new to LaTeX, the wikibook is a great place to start:
+% http://en.wikibooks.org/wiki/LaTeX
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[paper=a4,fontsize=11pt]{scrartcl} % KOMA-article class
+
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage[protrusion=true,expansion=true]{microtype}
+\usepackage{amsmath,amsfonts,amsthm}     % Math packages
+\usepackage{graphicx}                    % Enable pdflatex
+\usepackage[svgnames]{xcolor}            % Colors by their 'svgnames'
+\usepackage{geometry}
+\textheight=700px                    % Saving trees ;-)
+\usepackage{url}
+
+\frenchspacing              % Better looking spacings after periods
+\pagestyle{empty}           % No pagenumbers/headers/footers
+
+\usepackage[colorlinks = true,
+linkcolor = blue,
+urlcolor  = blue,
+citecolor = blue,
+anchorcolor = blue]{hyperref}
+
+%%% Custom sectioning (sectsty package)
+%%% ------------------------------------------------------------
+\usepackage{sectsty}
+
+\sectionfont{%			            % Change font of \section command
+	\usefont{OT1}{phv}{b}{n}%		% bch-b-n: CharterBT-Bold font
+	\sectionrule{0pt}{0pt}{-5pt}{3pt}}
+
+%%% Macros
+%%% ------------------------------------------------------------
+\newlength{\spacebox}
+\settowidth{\spacebox}{888888888888888888888888}			% Box to align text
+\newcommand{\sepspace}{\vspace*{1em}}		% Vertical space macro
+
+\newcommand{\MyName}[1]{ % Name
+	\Huge \usefont{OT1}{phv}{b}{n} \hfill #1
+	\par \normalsize \normalfont}
+
+\newcommand{\MySlogan}[1]{ % Slogan (optional)
+	\large \usefont{OT1}{phv}{m}{n}\hfill \textit{#1}
+	\par \normalsize \normalfont}
+
+\newcommand{\MyProject}[1]{ % Slogan (optional)
+	\Large \usefont{OT1}{phv}{m}{n}\hfill #1
+	\par \normalsize \normalfont}
+
+\newcommand{\MyMentor}[1]{ % Slogan (optional)
+	\large \usefont{OT1}{phv}{m}{n}\hfill \textit{Mentor: #1}
+	\par \normalsize \normalfont}
+
+\newcommand{\NewPart}[1]{\section*{\uppercase{#1}}}
+
+\newcommand{\PersonalEntry}[2]{
+	\noindent\hangindent=2em\hangafter=0 % Indentation
+	\parbox{\spacebox}{        % Box to align text
+		\textit{#1}}		       % Entry name (birth, address, etc.)
+	\hspace{1.5em} #2 \par}    % Entry value
+
+\newcommand{\SkillsEntry}[2]{      % Same as \PersonalEntry
+	\noindent\hangindent=2em\hangafter=0 % Indentation
+	\parbox{\spacebox}{        % Box to align text
+		\textit{#1}}			   % Entry name (birth, address, etc.)
+	\hspace{1.5em} #2 \par}    % Entry value	
+
+\newcommand{\EducationEntry}[4]{
+	\noindent \textbf{#1} \hfill      % Study
+	\colorbox{Black}{%
+		\parbox{6em}{%
+			\hfill\color{White}#2}} \par  % Duration
+	\noindent \textit{#3} \par        % School
+	\noindent\hangindent=2em\hangafter=0 \small #4 % Description
+	\normalsize \par}
+
+\newcommand{\WorkEntry}[4]{				  % Same as \EducationEntry
+	\noindent \textbf{#1} \hfill      % Jobname
+	\colorbox{Black}{\color{White}#2} \par  % Duration
+	\noindent \textit{#3} \par              % Company
+	\noindent\hangindent=2em\hangafter=0 \small #4 % Description
+	\normalsize \par}
+
+%%% Begin Document
+%%% ------------------------------------------------------------
+\begin{document}
+	% you can upload a photo and include it here...
+	%\begin{wrapfigure}{l}{0.5\textwidth}
+	%	\vspace*{-2em}
+	%		\includegraphics[width=0.15\textwidth]{photo}
+	%\end{wrapfigure}
+	
+	\MyName{Alexey Kulikov}
+	\MySlogan{GSoC Project Proposal}
+	\MyProject{Regression localization from stack traces}
+	\MyMentor{Mr. Calixte Denizet}
+	
+	\sepspace
+	
+	%%% Personal details
+	%%% ------------------------------------------------------------
+	\NewPart{Personal Information}{}
+	
+	\PersonalEntry{Name}{Alexey Kulikov}
+	\PersonalEntry{Email}{\url{alexeyqu@gmail.com}}
+	\PersonalEntry{IRC nick}{alexeyqu}
+	\PersonalEntry{Telephone}{+7 (929) 639-99-14 }
+	\PersonalEntry{Website}{\href{https://alexeyqu.github.io/}{alexeyqu.github.io} }
+	\PersonalEntry{Other contact methods}{\href{http://github.com/alexeyqu}{github}}
+	\PersonalEntry{Country of residence}{Russia}
+	\PersonalEntry{Timezone}{UTC+3}
+	\PersonalEntry{Primary language}{Russian}
+	
+	%%% Education
+	%%% ------------------------------------------------------------
+	\NewPart{Project Proposal}{}
+	
+	\begin{itemize}
+		\item The goal is to develop a tool that can quickly find a patch that caused a bug.
+		
+		\item This tools will be analyzing a set of stack traces, performing the intersection with the Firefox call graph and a set of recently committed patches. 
+		
+		\item One of the best ways to do it --- a Clang plugin, due to its vast and customizable API providing ways to work with AST, parse table and llvm libs. 
+		
+	\end{itemize}
+	
+
+	\NewPart{Schedule of Deliverables}
+	
+	The final deliverables would consist of: 
+	
+	\begin{itemize}
+		\item CLang plugin providing high quality visualizations of call graphs; 
+		\item Tools providing interaction with Bugzilla;
+		\item Tools for mapping bugs on specific patches in Bugzilla;
+		\item Some test cases.
+	\end{itemize}
+	
+	Staring on May 4, when Google announces the accepted students, the whole available time of GSoC is about 16 weeks. Accordingly, my planned schedule is:
+	
+	\begin{itemize}
+		\item  Weeks 1-3: Getting to know the community; discussing the details with my mentor; 
+		\item  Weeks 3-5: Studying the Clang API better, starting to develop Backtrace analyzer;
+		\item  Weeks 5-7: Connecting the tool to Bugzilla, getting some test cases;
+		
+		Note: Here I've got my Bachelor Thesis defence, it will take some of my time;
+		
+		\item  Weeks 7-11: Setting up the interaction with latest patches;
+		\item  Weeks 11-14: Testing with different cases, updating the code accordingly;
+		\item  Weeks 14-16: Tying up loose ends, writing docs, pushing onto public repos.
+	\end{itemize}
+	
+	\NewPart{Open Source Development Experience}
+	
+	I've participated in several student projects hosted on github \\(e.g. \href{https://github.com/team-PowerSpace/PowerSpace}{Powerspace -- Powerpoint for mindmaps.}) \\
+	as well as developed several on my own \\(e.g. implementation of the classic \href{https://github.com/alexeyqu/OntoTeamCompiler}{MiniJava Compiler}).
+	
+	\NewPart{Work/Internship Experience}
+	
+	I am presently on leave from my normal job as a computational linguist at ABBYY, \\so that I can complete my Bachelor Degree. 
+	
+	\sepspace
+	
+	\EducationEntry{Computational Linguist -- ABBYY}{2016-2017}{
+	\begin{itemize}
+		\item Developing information extraction rules for ABBYY Compreno technology;
+		\item Resolved over 100 issues on extraction of basic concepts;
+		\item Successfully deployed 2 proof-of-concept projects for corporate clients.
+	\end{itemize}}
+
+	\EducationEntry{Teaching Assistant -- «Intellectual» school}{2013-2016}{
+		\begin{itemize}
+		\item One of top 10 schools in Russia in 2016;
+		\item Led Formal Languages and Math Olympiad courses;
+		\item 7 students got several awards in a few months.
+	\end{itemize}}
+	
+	%%% Work experience
+	%%% ------------------------------------------------------------
+	\NewPart{Academic Experience}{}
+	
+	\EducationEntry{Student -- MIPT}{2013-now}{
+		\begin{itemize}
+			\item Majoring in CS;
+			\item Writing bachelor thesis on kana/kanji OCR error correction;
+			\item Participating in different study projects and activities\\ (e.g. \href{http://julesvernetrilogy.com/}{Jules Verne Trilogy Visualization});
+			\item Running, swimming, playing the guitar.
+		\end{itemize}
+	}
+	
+	%%% Skills
+	%%% ------------------------------------------------------------
+	\NewPart{Why Me}{}
+	
+	\sepspace
+	
+	I have some experience in programming (CPU emulation + binary translation to x86, experiments with OpenGL, the (already mentioned) MiniJava compiler, game bots development and some more)
+	as well as in NLP (during my work at ABBYY) and machine learning.
+	
+	\sepspace
+	
+	I believe that Clang is a really good tool for understanding the internals of a compiler.
+	
+	I want to learn it more.
+
+
+\newpage
+
+	\sepspace
+	\sepspace
+	
+	Some of my relevant skills are listed below:
+	
+	\sepspace
+	
+	\SkillsEntry{Languages}{Russian (native)}
+	\SkillsEntry{}{English (fluent)}
+	\SkillsEntry{}{French (intermediate, DELF B1 diploma,}
+	\SkillsEntry{}{participant of All-Russian Olympiad Finals)}
+	
+	\SkillsEntry{Programming}{C/C++ (flex-bison, Win32 API, Doxygen)}
+	\SkillsEntry{}{Python (sklearn, numpy, scipy, nltk)}
+	\SkillsEntry{}{Unix (bash, System V IPC)}
+	\SkillsEntry{}{\LaTeX}
+	
+	\sepspace
+	
+	If you want to know more, please look at my CV (available \href{http://alexeyqu.github.io/}{here}).
+	
+	\NewPart{Why Mozilla}
+	
+	\sepspace
+	
+	I really love the spirit of Mozilla and would like to be part of its community. \\This project is a good start.
+	
+	\sepspace
+	
+	Plus, I've already applied to Mozilla Summer Internship for quite a similar topic, because it is really interesting and useful.
+	
+	
+	%%% References
+	
+	
+	
+\end{document}
