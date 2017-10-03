@@ -1,0 +1,251 @@
+\documentclass[14pt]{beamer}
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english,russian]{babel}
+\usepackage{amssymb,amsfonts,amsmath,mathtext}
+\usepackage{cite,enumerate,float,indentfirst}
+\usepackage{booktabs}
+\usepackage{listings}
+
+\graphicspath{{images/}}
+
+\usetheme{Pittsburgh}
+\usecolortheme{whale}
+
+\setbeamercolor{footline}{fg=blue}
+\setbeamertemplate{footline}{
+	\leavevmode%
+	\hbox{%
+		\begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{}%
+			Kulikov Alexey, ABBYY
+		\end{beamercolorbox}%
+		\begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{}%
+			Moscow, 2017
+		\end{beamercolorbox}%
+		\begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,right]{}%
+			Page \insertframenumber{} of \inserttotalframenumber \hspace*{2ex}
+	\end{beamercolorbox}}%
+	\vskip0pt%
+}
+
+\newcommand{\itemi}{\item[\checkmark]}
+
+\title{Flex}
+\subtitle{\footnotesize{}}
+\author{\small{%
+		~Kulikov Аlexey}\\%
+	\vspace{30pt}%
+	ABBYY%
+	\vspace{20pt}%
+}
+\date{\small{Moscow, 2017}}
+
+\begin{document}
+	
+	\maketitle
+	
+	\begin{frame}
+		
+		\frametitle{What is Flex?}
+		\begin{itemize}
+			\item Flex -- The Fast Lexical Analyzer;
+			\item A tool for generating programs that perform pattern-matching on text;
+			\item Flex is a free implementation of the original Unix \textbf{lex} program;
+			\item Free, but non-GNU.
+			\item \href{https://github.com/westes/flex}{github.com/westes/flex}
+		\end{itemize}
+	\end{frame}
+
+	\begin{frame}
+	
+		\frametitle{What is lex?}
+		\begin{itemize}
+			\item Lex -- A Lexical Analyzer Generator;
+			\item A tool for writing programs that are directed \\by regex instances from the input;
+			\item Is designed to simplify interfacing with Yacc;
+			\item The <<host language>> can be \textbf{C}, Ratfor, ...
+			\item \href{http://dinosaur.compilertools.net/}{dinosaur.compilertools.net}
+		\end{itemize}
+	\end{frame}
+		
+	\begin{frame}
+	
+		\frametitle{Lex overview}
+		\begin{itemize}
+			\item Lex source -- a table ( regex $\rightarrow$ action );
+			\item Lex generates a DFA based on the table;
+			\item DFA parses the input line by line \\and splits lines into tokens;
+			\item If a token matches some \textbf{regex}, \\the corresponding \textbf{action} occurs.
+		\end{itemize}
+	\end{frame}	
+
+	\begin{frame}
+	
+		\frametitle{Lex overview}
+		\begin{itemize}
+			\item Lex accepts ambiguous specifications and chooses \textbf{the longest match} possible;
+			\item All the actions occur when a line is fully parsed;
+			\item The order of actions is preserved;
+			\item If no match found, the token is printed <<as is>>.
+		\end{itemize}
+	\end{frame}
+
+	\begin{frame}
+		
+		\frametitle{Lex pipeline}
+		\begin{itemize}
+			\item[1] $ \text{Source} \rightarrow \boxed{\text{ Lex }} \rightarrow \text{yylex} $
+			\item[2] $ \text{Input} \rightarrow \boxed{\text{ yylex }} \rightarrow \text{Output} $
+		\end{itemize}
+	\end{frame}
+
+\begin{frame}[fragile]
+	
+	\frametitle{Lex source code}	
+	
+	\begin{lstlisting}
+  {definitions}
+  %%
+  {rules}
+  %% // (optional)
+  {user subroutines} // (optional)
+	\end{lstlisting}
+	
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{A trivial example}
+	
+\begin{itemize}
+	\item Strips whitespace at the EOL;
+	\item Squashes all other whitespace characters.
+\end{itemize}	
+
+	\begin{lstlisting}
+	%%
+	[ \t]+$   ; 
+	[ \t]+    printf(" ");
+	\end{lstlisting}
+
+	
+\end{frame}
+
+\begin{frame}[fragile]
+	
+	\frametitle{Regex}	
+	
+	Operators: \text{" \ [ ] \textasciicircum - ? . * + | ( ) \$ / \{ \} \% < >}
+	
+	\begin{itemize}
+		\item $xyz"++" \Leftrightarrow xyz \backslash+\backslash+$
+		\item $[a-z0-9<>\_]$
+		\item $[\backslash40-\backslash176]$ -- printable ASCII
+		\item $(ab|cd+)?(ef)*$
+		\item $ab/cd$ -- trailing context
+		\item $\hat{}\ abc\$ \Leftrightarrow \hat{}\ abc/\backslash n$
+		\item $<x>a$ -- initial state of DFA is x
+	\end{itemize}
+	
+	
+\end{frame}
+
+\begin{frame}[fragile]
+	
+	\frametitle{User actions}	
+	
+	\begin{itemize}
+		\item Default = input $\rightarrow$ output;
+		\item yytext = matched token, yyleng = len(yytext);
+		\item ECHO = printf(''\%s'', yytext);
+		\item input(), unput(), output() macros;
+		\item yymore(), yyless(yyleng - 1);
+		\item yywrap() after EOF, default retval == 1;
+		\item REJECT; means <<go to the next alternative>>;
+		\item \#define YY\_USER\_ACTION.
+	\end{itemize}
+	
+\end{frame}
+
+\begin{frame}[fragile]
+	
+	\frametitle{Definitions}	
+	
+	Copied directly to lex.yy.c:
+	\begin{itemize}
+		\item Any line that is not a regex-action pair and begins with a whitespace;
+		\item Anything between \{\% and \%\};
+		\item Anything after \%\%.
+	\end{itemize}
+	
+\end{frame}
+
+\begin{frame}[fragile]
+	
+	\frametitle{Lex + YACC}	
+	
+	YACC uses retvals from yylex().
+	
+	So, each user action block should end with
+	
+	\begin{lstlisting}
+return(token);
+	\end{lstlisting}
+	
+	Link it with -lfl key.
+	
+\end{frame}
+
+\begin{frame}[fragile]
+	
+	\frametitle{Start conditions}	
+	
+	\begin{lstlisting}
+%START AA BB CC
+%%
+^a                {ECHO; BEGIN AA;}
+^b                {ECHO; BEGIN BB;}
+^c                {ECHO; BEGIN CC;}
+\n                {ECHO; BEGIN 0;}
+<AA>magic         printf("first");
+<BB>magic         printf("second");
+<CC>magic         printf("third");
+	\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]
+	
+	\frametitle{Notes}	
+	
+	\begin{itemize}
+		\item Remember that . does not include newline;
+		\item Don't use $(.|\backslash n)+$, it causes buffer overflow;
+		\item REJECT; 
+	\end{itemize}
+	
+\end{frame}
+
+\begin{frame}[fragile]
+	
+	\frametitle{Some spoilers}	
+	
+	\begin{itemize}
+		\item \% flex-specific macros (\% array, \% option);
+		\item flex++ and C++ scanners;
+		\item Interaction with bison;
+		\item . . .?
+	\end{itemize}
+	
+\end{frame}
+
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	\begin{frame}
+		\center{\huge
+			Dura lex, sed lex.
+		}
+	\end{frame}
+	
+\end{document} 
