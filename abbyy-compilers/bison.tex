@@ -1,0 +1,189 @@
+\documentclass[14pt]{beamer}
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english,russian]{babel}
+\usepackage{amssymb,amsfonts,amsmath,mathtext}
+\usepackage{cite,enumerate,float,indentfirst}
+\usepackage{booktabs}
+\usepackage{listings}
+
+\graphicspath{{images/}}
+
+\usetheme{Pittsburgh}
+\usecolortheme{whale}
+
+\setbeamercolor{footline}{fg=blue}
+\setbeamertemplate{footline}{
+	\leavevmode%
+	\hbox{%
+		\begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{}%
+			Kulikov Alexey, ABBYY
+		\end{beamercolorbox}%
+		\begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{}%
+			Moscow, 2017
+		\end{beamercolorbox}%
+		\begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,right]{}%
+			Page \insertframenumber{} of \inserttotalframenumber \hspace*{2ex}
+	\end{beamercolorbox}}%
+	\vskip0pt%
+}
+
+\newcommand{\itemi}{\item[\checkmark]}
+
+\title{GNU Bison}
+\subtitle{\footnotesize{}}
+\author{\small{%
+		~Kulikov Аlexey}\\%
+	\vspace{30pt}%
+	ABBYY%
+	\vspace{20pt}%
+}
+\date{\small{Moscow, 2017}}
+
+\begin{document}
+	
+	\maketitle
+
+\begin{frame}[fragile]
+	
+	\frametitle{Flex EOF rules}
+
+\begin{small}
+	\begin{lstlisting}
+%x quote
+%%
+
+...other rules for dealing with quotes...
+
+<quote><<EOF>>   {
+	error( "unterminated quote" );
+	yyterminate();
+}
+<<EOF>>  {
+	if ( *++filelist )
+		yyin = fopen( *filelist, "r" );
+	else
+		yyterminate();
+}
+	\end{lstlisting}
+\end{small}
+
+\end{frame}
+	
+\begin{frame}[fragile]
+	
+	\frametitle{Flex C++ scanners}
+	
+	\begin{itemize}
+		\item \%option c++, or 'flex -+', or 'flex++'
+		\item `lex.yy.c' $\rightarrow$ `lex.yy.cc', includes 'FlexLexer.h'
+		\item FlexLexer \begin{itemize}
+			\item const char* YYText() $\leftrightarrow$ yytext
+			\item int YYLeng() $\leftrightarrow$ yyleng
+			\item int lineno() const $\leftrightarrow$ \%option yylineno
+		\end{itemize}
+		\item yyFlexLexer : FlexLexer \begin{itemize}
+			\item yyFlexLexer( istream* yyin, ostream* yyout )
+			\item virtual int yylex()
+		\end{itemize}
+	\end{itemize}
+	
+\end{frame}
+
+\begin{frame}[fragile]
+	
+	\frametitle{What is Bison?}	
+	
+	\begin{itemize}
+		\item CF grammar $\rightarrow$ LR parser with LALR(1) tables;
+		\item Upward-compatible with Yacc;
+		\item Is a part og the GNU Project;
+		\item \href{https://www.gnu.org/software/bison/}{www.gnu.org/software/bison/};
+		\item Used by: Ruby, PHP, GCC (before 2004), Go, Bash, MySQL, LilyPond, ...
+	\end{itemize}
+	
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Bison pipeline}
+	\begin{itemize}
+		\item[1] $ \text{*.y} \rightarrow \boxed{\text{ Bison }} \rightarrow \text{yyparse: *.tab.c, *.tab.h} $
+		\item[2] $ \text{*.lex} \rightarrow \boxed{\text{ Lex }} \rightarrow \text{yylex: *.yy.c} $
+		\item[3] $ \text{Input} \rightarrow \boxed{\text{ yylex }} \rightarrow \text{Token\_ID} $
+		\item[4] $ \text{Token\_ID} \rightarrow \boxed{\text{ yyparse }} \rightarrow \text{Semantic Operation} $
+	\end{itemize}
+	
+\end{frame}
+
+\begin{frame}[fragile]
+	
+	\frametitle{Bison Grammar File}	
+	
+\begin{lstlisting}
+	%{
+	Prologue
+	%}
+	
+	Bison declarations
+	
+	%%
+	Grammar rules
+	%%
+	
+	Epilogue
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]
+	
+	\frametitle{Prologue}	
+	
+\begin{itemize}
+	\item Contains definitions of: macros, functions, etc;
+	\item Inserted into .c file before definition of yyparse;
+	\item \textbf{\%code} inserts: \begin{itemize}
+		\item (unqualified): into default location, \textit{verbatim};
+		\item \textbf{requires}: into .h and .c before YYL/STYPE defs \\ good for writing YYL/STYPE overrides;
+		\item \textbf{provides}: into .h and .c after YY*, token defs \\ good for other defs and decls;
+		\item \textbf{top}: inserted near the top of .c file;
+		\item \textbf{imports}: Java-specific, for import directives.
+	\end{itemize}
+\end{itemize}
+	
+\end{frame}
+
+
+\begin{frame}[fragile]
+	
+	\frametitle{Notes}	
+	
+	\begin{itemize}
+		\item YYLTYPE: Macro for the data type of yylloc;
+		\item YYSTYPE: Macro for the data type of semantic values; int by default.
+	\end{itemize}
+	
+\end{frame}
+
+	\begin{frame}
+	\center{\huge
+		À bientôt.
+	}
+\end{frame}
+
+\begin{frame}[fragile]
+	
+	\frametitle{Bison declarations}	
+	
+	\begin{itemize}
+		\item All token type names must be declared;
+		\item The first rule specifies the start symbol;
+		\item \%token name $\rightarrow$ \#define
+	\end{itemize}
+	
+\end{frame}
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+
+\end{document} 
