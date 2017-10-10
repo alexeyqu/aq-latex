@@ -216,6 +216,52 @@ return(token);
 
 \begin{frame}[fragile]
 	
+	\frametitle{EOF rules}
+
+\begin{small}
+	\begin{lstlisting}
+%x quote
+%%
+
+...other rules for dealing with quotes...
+
+<quote><<EOF>>   {
+	error( "unterminated quote" );
+	yyterminate();
+}
+<<EOF>>  {
+	if ( *++filelist )
+		yyin = fopen( *filelist, "r" );
+	else
+		yyterminate();
+}
+	\end{lstlisting}
+\end{small}
+
+\end{frame}
+	
+\begin{frame}[fragile]
+	
+	\frametitle{C++ scanners}
+	
+	\begin{itemize}
+		\item \%option c++, or 'flex -+', or 'flex++'
+		\item `lex.yy.c' $\rightarrow$ `lex.yy.cc', includes 'FlexLexer.h'
+		\item FlexLexer \begin{itemize}
+			\item const char* YYText() $\leftrightarrow$ yytext
+			\item int YYLeng() $\leftrightarrow$ yyleng
+			\item int lineno() const $\leftrightarrow$ \%option yylineno
+		\end{itemize}
+		\item yyFlexLexer : FlexLexer \begin{itemize}
+			\item yyFlexLexer( istream* yyin, ostream* yyout )
+			\item virtual int yylex()
+		\end{itemize}
+	\end{itemize}
+	
+\end{frame}
+
+\begin{frame}[fragile]
+	
 	\frametitle{Notes}	
 	
 	\begin{itemize}
@@ -225,20 +271,6 @@ return(token);
 	\end{itemize}
 	
 \end{frame}
-
-\begin{frame}[fragile]
-	
-	\frametitle{Some spoilers}	
-	
-	\begin{itemize}
-		\item \% flex-specific macros (\% array, \% option);
-		\item flex++ and C++ scanners;
-		\item Interaction with bison;
-		\item . . .?
-	\end{itemize}
-	
-\end{frame}
-
 
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
